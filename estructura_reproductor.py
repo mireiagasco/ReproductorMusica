@@ -1,19 +1,9 @@
-#Arxiu que conté les funcions que generen el reproductor
+#Arxiu que conté la funció que genera el reproductor
+
 from funcions_reproductor import *
 from tkinter import *
 import tkinter.messagebox
 import tkinter.filedialog
-
-#Funció que crida les funcions que toqui segons el botó pitjat
-def switch(opcio):
-    pausat = False
-    muted = False
-    fitxer = None
-    fil = None
-    playlist = []
-    index = 0
-    t = 0
-
 
 #Funció que genera el reproductor
 def crear_reproductor():
@@ -30,7 +20,7 @@ def crear_reproductor():
     #creem el submenú "reproductor"
     submenu_reproductor = Menu(barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
     barra_menu.add_cascade(label = "Reproductor", menu = submenu_reproductor)
-    submenu_reproductor.add_command(label = "Importar música")
+    submenu_reproductor.add_command(label = "Importar música", command = lambda: switch(accio = 0, listbox = llista))
     submenu_reproductor.add_command(label = "Sortir")
 
     #creem el submenú "ajuda"
@@ -102,7 +92,7 @@ def crear_reproductor():
     boto_mute = Button(marc_inferior, image = foto_volum, borderwidth = 0)
     boto_mute.grid(row = 1, column = 0, padx = 20, pady = 10)
 
-    boto_afegir = Button(marc_esquerre, text = " Afegir ")
+    boto_afegir = Button(marc_esquerre, text = " Afegir ", command = lambda: switch(accio = 0, listbox = llista))
     boto_afegir.grid(row = 1, column = 0, pady = 10, padx = 10)
 
     boto_eliminar = Button(marc_esquerre, text = "Eliminar")
@@ -115,5 +105,4 @@ def crear_reproductor():
 
     #finestra_general.protocol("WM_DELETE_WINDOW", aturar_programa)
     finestra_general.mainloop()
-
 
