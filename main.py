@@ -7,7 +7,6 @@ from os import *
 
 #generem la finestra principal
 finestra_general = Tk()
-finestra_general.geometry("350x300")
 finestra_general.title("Reproductor de Música")
 finestra_general.iconbitmap(r"icones\icona_reproductor.ico")
 
@@ -140,7 +139,7 @@ etiqueta_nom = Label(marc_superior, pady = 10)
 etiqueta_nom.pack()
 
 #creem l'etiqueta on mostrarem la durada de la cançó
-etiqueta_durada = Label(marc_superior, pady = 5)
+etiqueta_durada = Label(marc_superior, pady = 10)
 etiqueta_durada.pack()
 
 #carreguem les fotos que utilitzarem pels botons
@@ -177,3 +176,4 @@ slider_volum.set(50) #establim 50 com el valor per defecte
 slider_volum.grid(pady = 20, column = 0, row = 0)
 
 finestra_general.mainloop()
+
