@@ -25,7 +25,7 @@ fitxer = None
 def mostrar_detalls():
     etiqueta_nom['text'] = "Nom: {}".format(path.basename(fitxer))
     min, sec = obtenir_durada()
-    etiqueta_durada['text'] = "Durada: {:2d}:{:2d}".format(min, sec)
+    etiqueta_durada['text'] = "Durada: {:00d}:{:00d}".format(min, sec)
 
 #funció que elimina els detalls quan es deixa de reproduir una cançó
 def eliminar_detalls():
@@ -98,7 +98,7 @@ def obtenir_durada():
     canço_actual = mixer.Sound(fitxer)
     durada_total = canço_actual.get_length()
     min, sec = divmod(durada_total, 60)
-    return min, sec
+    return int(min), int(sec)
 
 #-----------------------------------------------------------------------------------------------------
 
@@ -140,7 +140,7 @@ etiqueta_nom = Label(marc_superior, pady = 10)
 etiqueta_nom.pack()
 
 #creem l'etiqueta on mostrarem la durada de la cançó
-etiqueta_durada = Label(marc_superior, pady = 10)
+etiqueta_durada = Label(marc_superior, pady = 5)
 etiqueta_durada.pack()
 
 #carreguem les fotos que utilitzarem pels botons
