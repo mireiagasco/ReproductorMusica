@@ -3,7 +3,7 @@ import tkinter.messagebox
 import tkinter.filedialog
 from pygame import mixer
 from os import *
-
+from mutagen.mp3 import MP3
 
 #generem la finestra principal
 finestra_general = Tk()
@@ -22,8 +22,20 @@ fitxer = None
 
 #funció que mostra els detalls de la cançó que es reprodueix
 def mostrar_detalls():
+    #mostrem el nom
     etiqueta_nom['text'] = "Nom: {}".format(path.basename(fitxer))
-    min, sec = obtenir_durada()
+    info = path.splitext(fitxer)
+    #segons l'extensió obtenim la durada de diferents formes
+    if info[1] == '.wav':
+        canço_actual = mixer.Sound(fitxer)
+        durada_total = canço_actual.get_length()
+    elif info[1] == '.mp3':
+        audio = MP3(fitxer)
+        durada_total = audio.info.length
+    else:
+        durada_total = 0
+    #formategem la durada i la mostrem
+    min, sec = format_durada(durada_total)
     etiqueta_durada['text'] = "Durada: {:00d}:{:00d}".format(min, sec)
 
 #funció que elimina els detalls quan es deixa de reproduir una cançó
@@ -92,11 +104,8 @@ def cercar_musica():
     fitxer = tkinter.filedialog.askopenfilename()
 
 #funció que obté la durada de la cançó que sona
-def obtenir_durada():
-    global fitxer
-    canço_actual = mixer.Sound(fitxer)
-    durada_total = canço_actual.get_length()
-    min, sec = divmod(durada_total, 60)
+def format_durada(temps):
+    min, sec = divmod(temps, 60)
     return int(min), int(sec)
 
 #-----------------------------------------------------------------------------------------------------
@@ -176,4 +185,3 @@ slider_volum.set(50) #establim 50 com el valor per defecte
 slider_volum.grid(pady = 20, column = 0, row = 0)
 
 finestra_general.mainloop()
-
