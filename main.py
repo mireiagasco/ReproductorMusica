@@ -19,11 +19,13 @@ mixer.init()
 pausat = False
 muted = False
 fitxer = None
+fil = None
 
 #definim totes les funcions que necessitarem------------------------------------------------------
 
 #funció que mostra els detalls de la cançó que es reprodueix
 def mostrar_detalls():
+    global fil
     #mostrem el nom
     etiqueta_nom['text'] = "Nom: {}".format(path.basename(fitxer))
     info = path.splitext(fitxer)
@@ -117,12 +119,14 @@ def format_durada(temps):
 
 #funció que obté la durada actual de la cançó
 def temps_rep(durada):
+    global pausat
     t = 0
     while t < durada and mixer.music.get_busy():
-        min, sec = divmod(t, 60)
-        etiqueta_durada_actual["text"] = "Temps: {:00d}:{:00d}".format(int(min), int(sec))
-        time.sleep(1)
-        t += 1
+        if pausat == False:
+            min, sec = divmod(t, 60)
+            etiqueta_durada_actual["text"] = "Temps: {:02d}:{:02d}".format(int(min), int(sec))
+            time.sleep(1)
+            t += 1
 
 #-----------------------------------------------------------------------------------------------------
 
