@@ -4,8 +4,10 @@ import tkinter.filedialog
 from pygame import mixer
 from os import *
 from mutagen.mp3 import MP3
+import threading
+import time
 
-#generem la finestra principal
+#generem la finestra principa
 finestra_general = Tk()
 finestra_general.title("Reproductor de Música")
 finestra_general.iconbitmap(r"icones\icona_reproductor.ico")
@@ -36,12 +38,17 @@ def mostrar_detalls():
         durada_total = 0
     #formategem la durada i la mostrem
     min, sec = format_durada(durada_total)
-    etiqueta_durada['text'] = "Durada: {:00d}:{:00d}".format(min, sec)
+    etiqueta_durada['text'] = "Total: {:00d}:{:00d}".format(min, sec)
+
+    #creem el thread per mostrar el temps actual
+    fil = threading.Thread(target = temps_rep, args = (durada_total,))
+    fil.start()
 
 #funció que elimina els detalls quan es deixa de reproduir una cançó
 def eliminar_detalls():
     etiqueta_nom['text'] = " "
     etiqueta_durada['text'] = " "
+    etiqueta_durada_actual['text'] = " "
 
 #funció que reprodueix una cançó prèviament seleccionada i dona error si no s'ha escollit la cançó
 def play():
@@ -108,6 +115,15 @@ def format_durada(temps):
     min, sec = divmod(temps, 60)
     return int(min), int(sec)
 
+#funció que obté la durada actual de la cançó
+def temps_rep(durada):
+    t = 0
+    while t < durada and mixer.music.get_busy():
+        min, sec = divmod(t, 60)
+        etiqueta_durada_actual["text"] = "Temps: {:00d}:{:00d}".format(int(min), int(sec))
+        time.sleep(1)
+        t += 1
+
 #-----------------------------------------------------------------------------------------------------
 
 #creem el menú
@@ -147,9 +163,13 @@ etiqueta_benvinguda.pack()
 etiqueta_nom = Label(marc_superior, pady = 10)
 etiqueta_nom.pack()
 
+#creem l'etiqueta amb la durada actual
+etiqueta_durada_actual = Label(marc_superior)
+etiqueta_durada_actual.pack(side = LEFT)
+
 #creem l'etiqueta on mostrarem la durada de la cançó
 etiqueta_durada = Label(marc_superior, pady = 10)
-etiqueta_durada.pack()
+etiqueta_durada.pack(side = RIGHT)
 
 #carreguem les fotos que utilitzarem pels botons
 foto_play = PhotoImage(file = r"icones\001-play.png")
