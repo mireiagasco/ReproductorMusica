@@ -111,6 +111,14 @@ def mute():
 def cercar_musica():
     global fitxer
     fitxer = tkinter.filedialog.askopenfilename()
+    afegir_a_llista(fitxer)
+
+#funció que afegeix una cançó passada pels arguments a la llista
+def afegir_a_llista(canço):
+    nom = path.basename(canço)
+    index = 0
+    llista.insert(index, nom)
+    index += 1
 
 #funció que obté la durada de la cançó que sona
 def format_durada(temps):
@@ -154,10 +162,6 @@ submenu_ajuda = Menu(barra_menu, tearoff = False)  #creem el submenú on aniran 
 barra_menu.add_cascade(label = "Ajuda", menu = submenu_ajuda)
 submenu_ajuda.add_command(label = "Sobre Nosaltres", command = sobre_nosaltres)
 
-#creem la l'etiqueta on mostrem la benvinguda
-etiqueta_benvinguda = Label(finestra_general, text = "Benvingut/da!", pady = 10)
-etiqueta_benvinguda.pack()
-
 #creem marcs per organitzar els botons
 marc_dret = Frame(finestra_general)
 marc_dret.pack(side = RIGHT)
@@ -174,9 +178,13 @@ marc_inferior.pack()
 marc_esquerre = Frame(finestra_general)
 marc_esquerre.pack(side = LEFT)
 
+#creem la l'etiqueta on mostrem la benvinguda
+etiqueta_benvinguda = Label(marc_superior, text = "Benvingut/da!", pady = 10)
+etiqueta_benvinguda.pack()
+
 #creem la listbox on mostrarem les cançons en cua
-llista = Listbox(marc_esquerre, height = 10, width = 30)
-llista.pack(side = TOP, padx = 10, pady = 10)
+llista = Listbox(marc_esquerre, height = 10, width = 25)
+llista.grid(row = 0, column = 0, columnspan = 2, pady = 10)
 
 #creem l'etiqueta on mostrarem el nom de la cançó
 etiqueta_nom = Label(marc_superior, pady = 10)
@@ -218,6 +226,12 @@ boto_seguent.grid(row = 0, column = 5, padx = 10, pady = 20)
 boto_mute = Button(marc_inferior, image = foto_volum, borderwidth = 0, command = mute)
 boto_mute.grid(row = 1, column = 0, padx = 20, pady = 10)
 
+boto_afegir = Button(marc_esquerre, text = " Afegir ", command = cercar_musica)
+boto_afegir.grid(row = 1, column = 0, pady = 10, padx = 10)
+
+boto_eliminar = Button(marc_esquerre, text = "Eliminar")
+boto_eliminar.grid(row = 1, column = 1, pady = 10, padx = 10)
+
 #creem el slider del volum
 slider_volum = Scale(marc_inferior, from_ = 0, to = 100, orient = "horizontal", label = "         Volum", command = modif_volum)
 slider_volum.set(50) #establim 50 com el valor per defecte
@@ -225,4 +239,3 @@ slider_volum.grid(pady = 10, column = 0, row = 0)
 
 finestra_general.protocol("WM_DELETE_WINDOW", aturar_programa)
 finestra_general.mainloop()
-
