@@ -20,6 +20,9 @@ pausat = False
 muted = False
 fitxer = None
 fil = None
+playlist = []
+index = 0
+t = 0
 
 #definim totes les funcions que necessitarem------------------------------------------------------
 
@@ -60,8 +63,9 @@ def play():
         mixer.music.unpause()
         pausat = False
     else:
-        if fitxer:
-            mixer.music.load(fitxer) #carreguem el fitxer que volem reproduir
+        if llista.curselection():
+            canço_seleccionada = llista.curselection()
+            mixer.music.load(playlist[canço_seleccionada[0]]) #carreguem el fitxer que volem reproduir
             mixer.music.play() #reproduim la música
             mostrar_detalls()
         else:
@@ -80,7 +84,18 @@ def stop():
 
 #funció que fa que es reprodueixi la següent cançó
 def seguent():
-    pass
+    global t
+    tupla_actual = llista.curselection()
+    index_actual = tupla_actual[0]
+    print(index_actual)
+    t = 0
+    llargada = len(playlist)
+    if index_actual + 1 > llargada:
+        mixer.music.load(playlist[0])
+    else:
+        mixer.music.load(playlist[index_actual + 1])
+    mixer.music.play()
+    mostrar_detalls()
 
 #funció que fa que es reprodueixi la cançó prèvia
 def previ():
@@ -115,9 +130,11 @@ def cercar_musica():
 
 #funció que afegeix una cançó passada pels arguments a la llista
 def afegir_a_llista(canço):
+    global playlist
+    global index
     nom = path.basename(canço)
-    index = 0
     llista.insert(index, nom)
+    playlist.append(canço)
     index += 1
 
 #funció que obté la durada de la cançó que sona
@@ -128,7 +145,7 @@ def format_durada(temps):
 #funció que obté la durada actual de la cançó
 def temps_rep(durada):
     global pausat
-    t = 0
+    global t
     while t <= durada and mixer.music.get_busy():
         if pausat == False:
             min, sec = divmod(t, 60)
