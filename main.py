@@ -132,6 +132,7 @@ def temps_rep(durada):
 def aturar_programa():
     stop()
     finestra_general.destroy()
+
 #-----------------------------------------------------------------------------------------------------
 
 #creem el menú
@@ -153,19 +154,29 @@ submenu_ajuda = Menu(barra_menu, tearoff = False)  #creem el submenú on aniran 
 barra_menu.add_cascade(label = "Ajuda", menu = submenu_ajuda)
 submenu_ajuda.add_command(label = "Sobre Nosaltres", command = sobre_nosaltres)
 
+#creem la l'etiqueta on mostrem la benvinguda
+etiqueta_benvinguda = Label(finestra_general, text = "Benvingut/da!", pady = 10)
+etiqueta_benvinguda.pack()
+
 #creem marcs per organitzar els botons
-marc_superior = Frame(finestra_general)
+marc_dret = Frame(finestra_general)
+marc_dret.pack(side = RIGHT)
+
+marc_superior = Frame(marc_dret)
 marc_superior.pack()
 
-marc_central = Frame(finestra_general)
+marc_central = Frame(marc_dret)
 marc_central.pack()
 
-marc_inferior = Frame(finestra_general)
+marc_inferior = Frame(marc_dret)
 marc_inferior.pack()
 
-#creem la l'etiqueta on mostrem la benvinguda
-etiqueta_benvinguda = Label(marc_superior, text = "Benvingut/da!", pady = 10)
-etiqueta_benvinguda.pack()
+marc_esquerre = Frame(finestra_general)
+marc_esquerre.pack(side = LEFT)
+
+#creem la listbox on mostrarem les cançons en cua
+llista = Listbox(marc_esquerre, height = 10, width = 30)
+llista.pack(side = TOP, padx = 10, pady = 10)
 
 #creem l'etiqueta on mostrarem el nom de la cançó
 etiqueta_nom = Label(marc_superior, pady = 10)
@@ -205,12 +216,13 @@ boto_seguent = Button(marc_central, image = foto_seguent, borderwidth = 0, comma
 boto_seguent.grid(row = 0, column = 5, padx = 10, pady = 20)
 
 boto_mute = Button(marc_inferior, image = foto_volum, borderwidth = 0, command = mute)
-boto_mute.grid(row = 1, column = 0, padx = 20)
+boto_mute.grid(row = 1, column = 0, padx = 20, pady = 10)
 
 #creem el slider del volum
 slider_volum = Scale(marc_inferior, from_ = 0, to = 100, orient = "horizontal", label = "         Volum", command = modif_volum)
 slider_volum.set(50) #establim 50 com el valor per defecte
-slider_volum.grid(pady = 20, column = 0, row = 0)
+slider_volum.grid(pady = 10, column = 0, row = 0)
 
 finestra_general.protocol("WM_DELETE_WINDOW", aturar_programa)
 finestra_general.mainloop()
+
