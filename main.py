@@ -121,13 +121,17 @@ def format_durada(temps):
 def temps_rep(durada):
     global pausat
     t = 0
-    while t < durada and mixer.music.get_busy():
+    while t <= durada and mixer.music.get_busy():
         if pausat == False:
             min, sec = divmod(t, 60)
             etiqueta_durada_actual["text"] = "Temps: {:02d}:{:02d}".format(int(min), int(sec))
             time.sleep(1)
             t += 1
 
+#funció que tanca el programa
+def aturar_programa():
+    stop()
+    finestra_general.destroy()
 #-----------------------------------------------------------------------------------------------------
 
 #creem el menú
@@ -143,7 +147,7 @@ finestra_general.config(menu = barra_menu) #la configurem per assegurar que es t
 submenu_arxiu = Menu(barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
 barra_menu.add_cascade(label = "Reproductor", menu = submenu_arxiu)
 submenu_arxiu.add_command(label = "Importar música", command = cercar_musica)
-submenu_arxiu.add_command(label = "Sortir", command = finestra_general.destroy)
+submenu_arxiu.add_command(label = "Sortir", command = aturar_programa)
 
 submenu_ajuda = Menu(barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
 barra_menu.add_cascade(label = "Ajuda", menu = submenu_ajuda)
@@ -208,4 +212,5 @@ slider_volum = Scale(marc_inferior, from_ = 0, to = 100, orient = "horizontal", 
 slider_volum.set(50) #establim 50 com el valor per defecte
 slider_volum.grid(pady = 20, column = 0, row = 0)
 
+finestra_general.protocol("WM_DELETE_WINDOW", aturar_programa)
 finestra_general.mainloop()
