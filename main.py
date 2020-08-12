@@ -2,10 +2,12 @@ from tkinter import *
 import tkinter.messagebox
 import tkinter.filedialog
 from pygame import mixer
+from os import *
 
 
 #generem la finestra principal
 finestra_general = Tk()
+finestra_general.geometry("350x300")
 finestra_general.title("Reproductor de Música")
 finestra_general.iconbitmap(r"icones\icona_reproductor.ico")
 
@@ -15,20 +17,34 @@ mixer.init()
 #definim les variables globals
 pausat = False
 muted = False
+fitxer = None
 
 #definim totes les funcions que necessitarem------------------------------------------------------
+
+#funció que mostra els detalls de la cançó que es reprodueix
+def mostrar_detalls():
+    etiqueta_nom['text'] = "Nom: {}".format(path.basename(fitxer))
+    min, sec = obtenir_durada()
+    etiqueta_durada['text'] = "Durada: {:2d}:{:2d}".format(min, sec)
+
+#funció que elimina els detalls quan es deixa de reproduir una cançó
+def eliminar_detalls():
+    etiqueta_nom['text'] = " "
+    etiqueta_durada['text'] = " "
 
 #funció que reprodueix una cançó prèviament seleccionada i dona error si no s'ha escollit la cançó
 def play():
     global pausat
+    global fitxer
     if pausat:
         mixer.music.unpause()
         pausat = False
     else:
-        try:
-            mixer.music.load() #carreguem el fitxer que volem reproduir
+        if fitxer:
+            mixer.music.load(fitxer) #carreguem el fitxer que volem reproduir
             mixer.music.play() #reproduim la música
-        except Exception:
+            mostrar_detalls()
+        else:
             tkinter.messagebox.showerror("Error", "No s'ha pogut reproduir l'arxiu")
 
 #funció que para temporalment la reproducció de la cançó que sona
@@ -37,8 +53,10 @@ def pause():
    mixer.music.pause()
    pausat = True
 
-#lambda que para la música
-stop = lambda: mixer.music.stop()
+#funció que para la música
+def stop():
+   mixer.music.stop()
+   eliminar_detalls()
 
 #funció que fa que es reprodueixi la següent cançó
 def seguent():
@@ -71,13 +89,18 @@ def mute():
 
 #funció que obre un buscador per importar els arxius de música que volguem
 def cercar_musica():
+    global fitxer
     fitxer = tkinter.filedialog.askopenfilename()
 
-#-----------------------------------------------------------------------------------------------------
+#funció que obté la durada de la cançó que sona
+def obtenir_durada():
+    global fitxer
+    canço_actual = mixer.Sound(fitxer)
+    durada_total = canço_actual.get_length()
+    min, sec = divmod(durada_total, 60)
+    return min, sec
 
-#creem la finestreta on mostrem la benvinguda
-etiqueta_benvinguda = Label(finestra_general, text = "Benvingut/da!", pady = 10)
-etiqueta_benvinguda.pack()
+#-----------------------------------------------------------------------------------------------------
 
 #creem el menú
 nom = "Reproductor de Música"
@@ -99,11 +122,26 @@ barra_menu.add_cascade(label = "Ajuda", menu = submenu_ajuda)
 submenu_ajuda.add_command(label = "Sobre Nosaltres", command = sobre_nosaltres)
 
 #creem marcs per organitzar els botons
+marc_superior = Frame(finestra_general)
+marc_superior.pack()
+
 marc_central = Frame(finestra_general)
 marc_central.pack()
 
 marc_inferior = Frame(finestra_general)
 marc_inferior.pack()
+
+#creem la l'etiqueta on mostrem la benvinguda
+etiqueta_benvinguda = Label(marc_superior, text = "Benvingut/da!", pady = 10)
+etiqueta_benvinguda.pack()
+
+#creem l'etiqueta on mostrarem el nom de la cançó
+etiqueta_nom = Label(marc_superior, pady = 10)
+etiqueta_nom.pack()
+
+#creem l'etiqueta on mostrarem la durada de la cançó
+etiqueta_durada = Label(marc_superior, pady = 10)
+etiqueta_durada.pack()
 
 #carreguem les fotos que utilitzarem pels botons
 foto_play = PhotoImage(file = r"icones\001-play.png")
@@ -131,17 +169,11 @@ boto_seguent = Button(marc_central, image = foto_seguent, borderwidth = 0, comma
 boto_seguent.grid(row = 0, column = 5, padx = 10, pady = 20)
 
 boto_mute = Button(marc_inferior, image = foto_volum, borderwidth = 0, command = mute)
-boto_mute.grid(row = 0, column = 2, padx = 20, pady = 20)
+boto_mute.grid(row = 1, column = 0, padx = 20)
 
 #creem el slider del volum
 slider_volum = Scale(marc_inferior, from_ = 0, to = 100, orient = "horizontal", label = "         Volum", command = modif_volum)
 slider_volum.set(50) #establim 50 com el valor per defecte
 slider_volum.grid(pady = 20, column = 0, row = 0)
-
-
-
-
-
-
 
 finestra_general.mainloop()
