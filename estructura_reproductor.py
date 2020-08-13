@@ -25,8 +25,8 @@ def crear_reproductor():
 
     #creem el submenú "ajuda"
     submenu_ajuda = Menu(barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
-    barra_menu.add_cascade(label = "Ajuda", menu = submenu_ajuda)
-    submenu_ajuda.add_command(label = "Sobre Nosaltres", command = sobre_nosaltres)
+    barra_menu.add_cascade(label = "Informació", menu = submenu_ajuda)
+    submenu_ajuda.add_command(label = "Veure info", command = sobre_nosaltres)
 
     #creem marcs per organitzar els botons
     marc_dret = Frame(finestra_general)
@@ -80,10 +80,10 @@ def crear_reproductor():
     boto_pause = Button(marc_central, image = foto_pause, borderwidth = 0)
     boto_pause.grid(row = 0, column = 2, padx = 10, pady = 20)
 
-    boto_stop = Button(marc_central, image = foto_stop, borderwidth = 0)
+    boto_stop = Button(marc_central, image = foto_stop, borderwidth = 0, command = lambda: switch(accio = 3, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual))
     boto_stop.grid(row = 0, column = 3, padx = 10, pady = 20)
 
-    boto_play = Button(marc_central, image = foto_play, borderwidth = 0)
+    boto_play = Button(marc_central, image = foto_play, borderwidth = 0, command = lambda: switch(accio = 2, list = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual))
     boto_play.grid(row = 0, column = 4, padx = 10, pady = 20)
 
     boto_seguent = Button(marc_central, image = foto_seguent, borderwidth = 0)
@@ -105,5 +105,3 @@ def crear_reproductor():
 
     finestra_general.protocol("WM_DELETE_WINDOW", aturar_programa)
     finestra_general.mainloop()
-
-
