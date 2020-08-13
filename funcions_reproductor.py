@@ -9,12 +9,8 @@ import time
 #Funció que crida les funcions que toqui segons el botó pitjat
 def switch(**kwargs):
 
-    #inicialitzem el reproductor
-    mixer.init()
-
     #simulem les variables estàtiques que necessitarem en les diferents funcions
     switch.pausat = getattr(switch, "pausat", False)
-    switch.muted = getattr(switch, "muted", False)
     switch.fitxer = getattr(switch, "fitxer", None)
     switch.fil = getattr(switch, "fil", None)
     switch.playlist = getattr(switch, "playlist", [])
@@ -33,6 +29,10 @@ def switch(**kwargs):
         play(kwargs)
     elif opcio == 3:
         stop(kwargs)
+    elif opcio == 4:
+        pause()
+    elif opcio == 5:
+        pass
 
 #Lambda que mostra el missatge amb la informació
 sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
@@ -109,6 +109,12 @@ def play(dic_args):
 def stop(etiquetes):
    mixer.music.stop()
    eliminar_detalls(etiquetes)
+
+#funció que para temporalment la reproducció de la cançó que sona
+def pause():
+   mixer.music.pause()
+   switch.pausat = True
+
 
 #funció que obté la durada de la cançó que sona
 def format_durada(temps):
