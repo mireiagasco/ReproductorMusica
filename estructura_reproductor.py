@@ -1,5 +1,5 @@
-#Arxiu que conté la funció que genera el reproductor
-
+#Arxiu que conté la funció que genera el reproductor i les que controlen el volum
+from pygame import mixer
 from funcions_reproductor import *
 from tkinter import *
 import tkinter.messagebox
@@ -7,6 +7,9 @@ import tkinter.filedialog
 
 #Funció que genera el reproductor
 def crear_reproductor():
+        
+    #inicialitzem el reproductor
+    mixer.init()
 
     #generem la finestra principal
     finestra_general = Tk()
@@ -77,7 +80,7 @@ def crear_reproductor():
     boto_previ = Button(marc_central, image = foto_previ, borderwidth = 0)
     boto_previ.grid(row = 0, column = 1, padx = 10, pady = 20)
 
-    boto_pause = Button(marc_central, image = foto_pause, borderwidth = 0)
+    boto_pause = Button(marc_central, image = foto_pause, borderwidth = 0, command = lambda: switch(accio = 4))
     boto_pause.grid(row = 0, column = 2, padx = 10, pady = 20)
 
     boto_stop = Button(marc_central, image = foto_stop, borderwidth = 0, command = lambda: switch(accio = 3, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual))
@@ -89,7 +92,7 @@ def crear_reproductor():
     boto_seguent = Button(marc_central, image = foto_seguent, borderwidth = 0)
     boto_seguent.grid(row = 0, column = 5, padx = 10, pady = 20)
 
-    boto_mute = Button(marc_inferior, image = foto_volum, borderwidth = 0)
+    boto_mute = Button(marc_inferior, image = foto_volum, borderwidth = 0, command = lambda: mute(boto_mute, foto_mute, foto_volum, slider_volum))
     boto_mute.grid(row = 1, column = 0, padx = 20, pady = 10)
 
     boto_afegir = Button(marc_esquerre, text = " Afegir ", command = lambda: switch(accio = 0, listbox = llista))
@@ -99,9 +102,30 @@ def crear_reproductor():
     boto_eliminar.grid(row = 1, column = 1, pady = 10, padx = 10)
 
     #creem el slider del volum
-    slider_volum = Scale(marc_inferior, from_ = 0, to = 100, orient = "horizontal", label = "         Volum")
+    slider_volum = Scale(marc_inferior, from_ = 0, to = 100, orient = "horizontal", label = "         Volum", command = modif_volum)
     slider_volum.set(50) #establim 50 com el valor per defecte
     slider_volum.grid(pady = 10, column = 0, row = 0)
 
-    finestra_general.protocol("WM_DELETE_WINDOW", aturar_programa)
+    dic = {"nom": etiqueta_nom, "durada": etiqueta_durada, "durada_actual": etiqueta_durada_actual, "finestra": finestra_general}
+    finestra_general.protocol("WM_DELETE_WINDOW", lambda: aturar_programa(dic))
     finestra_general.mainloop()
+
+
+#funció que modifica el volum obtingut del slider per obtenir un valor entre 0 i 1 i el passa a la funció que modifica el volum
+def modif_volum(val):
+    volum = int(val) / 100
+    mixer.music.set_volume(volum)
+
+#funció que canvia l'estat de la música entre muted i amb so
+def mute(bt_mute,ft_mute, ft_volum, sld_volum):
+    mute.muted = getattr(mute, "muted", False)
+    if mute.muted: #tornem a activar el volum
+        bt_mute.configure(image = ft_volum)
+        mixer.music.set_volume(0.5)
+        sld_volum.set(50)
+        mute.muted = False
+    else: #mutejem la música
+        bt_mute.configure(image = ft_mute)
+        mixer.music.set_volume(0)
+        sld_volum.set(0)
+        mute.muted = True
