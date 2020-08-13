@@ -26,7 +26,7 @@ def switch(**kwargs):
     elif opcio == 1:
         aturar_programa(kwargs)
     elif opcio == 2:    #play
-        switch.fitxer, switch.pausat, switch.playlist = play(switch.fitxer, switch.pausat, switch.playlist, kwargs)
+        switch.fitxer, switch.pausat, switch.playlist, switch.seleccio = play(switch.fitxer, switch.pausat, switch.playlist,switch.seleccio, kwargs)
     elif opcio == 3:    #stop
         stop(kwargs)
     elif opcio == 4:    #pause
@@ -86,7 +86,7 @@ def eliminar_detalls(d_etiq):
     etiqueta_durada_actual['text'] = " "
 
 #funció que reprodueix una cançó prèviament seleccionada i dona error si no s'ha escollit la cançó
-def play(canço, pausat, playlist, dic_args):
+def play(canço, pausat, playlist, seleccio, dic_args):
     #si la música estava pausada la tornem a engegar
     if pausat:
         mixer.music.unpause()
@@ -97,13 +97,14 @@ def play(canço, pausat, playlist, dic_args):
         #si hi ha alguna cançó seleccionada
         if llista.curselection():
             pos_sel = llista.curselection()
-            canço = playlist[pos_sel[0]]
+            seleccio = playlist[pos_sel[0]]
+            canço = seleccio
             mixer.music.load(canço) #carreguem el fitxer que volem reproduir
             mixer.music.play() #reproduim la música
             mostrar_detalls(canço, dic_args)
         else:
             tkinter.messagebox.showerror("Error", "No s'ha seleccionat cap cançó")
-    return canço, pausat, playlist
+    return canço, pausat, playlist, seleccio
 
 #funció que atura la música
 def stop(d_args):
