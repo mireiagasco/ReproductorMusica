@@ -22,7 +22,7 @@ def switch(**kwargs):
 
     #cridem la funció que toqui segons el botó pitjat
     if opcio == 0:
-        switch.fitxer = importar_musica(kwargs.get("listbox", None), switch.fitxer)
+        switch.fitxer, switch.index, switch.playlist = importar_musica(kwargs.get("listbox", None), switch.fitxer, switch.index, switch.playlist)
     elif opcio == 1:
         aturar_programa(kwargs)
     elif opcio == 2:    #play
@@ -41,17 +41,18 @@ def switch(**kwargs):
 sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
 
 #funció que carrega una cançó a la llista de reproducció
-def importar_musica(llista, canço):
+def importar_musica(llista, canço, index, playlist):
     canço = tkinter.filedialog.askopenfilename()
-    afegir_a_llista(canço, llista)
-    return canço
+    index, playlist = afegir_a_llista(canço, llista, index, playlist)
+    return canço, index, playlist
 
 #funció que afegeix una cançó a una llista
-def afegir_a_llista(canço, llista):
+def afegir_a_llista(canço, llista, i, playlist):
     nom = path.basename(canço)
-    llista.insert(switch.index, nom)
-    switch.playlist.append(canço)
-    switch.index += 1
+    llista.insert(i, nom)
+    playlist.append(canço)
+    i += 1
+    return i, playlist
 
 #funció que mostra els detalls de la cançó que es reprodueix
 def mostrar_detalls(canço, dic_args):
