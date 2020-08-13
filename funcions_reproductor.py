@@ -33,9 +33,14 @@ def switch(**kwargs):
         mixer.music.pause()
         switch.pausat = True
     elif opcio == 5:    #següent o previ
-        switch.in_rep, switch.seleccio = obtenir_canço(kwargs.get("list", None), switch.in_rep, switch.seleccio)
-        switch.fitxer, switch.in_rep, switch.seleccio = saltar(kwargs.get("list", None), switch.playlist, switch.in_rep, switch.seleccio, switch.fitxer, switch.index - 1, kwargs)
-        
+        switch.in_rep, switch.seleccio, error = obtenir_canço(kwargs.get("list", None), switch.in_rep, switch.seleccio)
+        if error:
+            tkinter.messagebox.showerror("Error", "Selecciona una cançó per poder passar a la següent o a la prèvia")
+        else:
+            switch.fitxer, switch.in_rep, switch.seleccio = saltar(kwargs.get("list", None), switch.playlist, switch.in_rep, switch.seleccio, switch.fitxer, switch.index - 1, kwargs)
+    elif opcio == 6:
+        switch.playlist, switch.index = eliminar_canço(switch.playlist, kwargs.get("listbox", None), switch.index)
+
 #Lambda que mostra el missatge amb la informació
 sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
 
@@ -52,6 +57,21 @@ def afegir_a_llista(canço, llista, i, playlist):
     playlist.append(canço)
     i += 1
     return i, playlist
+
+#funció que elimina una cançó de la llista
+def eliminar_canço(playlist, listbox, index):
+    #obtenim l'índex de la cançó a eliminar
+    t_index_canço = listbox.curselection()
+    index_canço = t_index_canço[0]
+
+    #eliminem la cançó de la llista y de la listbox
+    del playlist[index_canço]
+    listbox.delete(index_canço)
+
+    #actualitzem la llargada de la llista
+    index -= 1
+
+    return playlist, index
 
 #funció que mostra els detalls de la cançó que es reprodueix
 def mostrar_detalls(canço, dic_args):
@@ -120,15 +140,17 @@ def stop(d_args):
 #funció que obté la posició i la cançó que toca reproduir
 def obtenir_canço(listbox, index_actual, seleccio):
     
-    #obtenim l'índex de la cançó seleccionada
-    posicio_actual = listbox.curselection()
+    if listbox.curselection():  
+        #si l'índex és nul o s'ha canviat la cançó seleccionada
+        posicio_actual = listbox.curselection()
+        if index_actual == None or posicio_actual[0] != seleccio:
+            index_actual = posicio_actual[0]
+            seleccio = index_actual
+        error = False
+    else:
+        error = True
 
-    #si l'índex és nul o s'ha canviat la cançó seleccionada
-    if index_actual == None or posicio_actual[0] != seleccio:
-        index_actual = posicio_actual[0]
-        seleccio = index_actual
-
-    return index_actual, seleccio
+    return index_actual, seleccio, error
 
 #funció que salta a la cançó que toca (prèvia o següent) i la reprodueix
 def saltar(llista, playlist, index_actual, seleccio, canço, llargada, d_args):
