@@ -34,8 +34,7 @@ def switch(**kwargs):
         switch.pausat = True
     elif opcio == 5:    #següent o previ
         switch.in_rep, switch.seleccio = obtenir_canço(kwargs.get("list", None), switch.in_rep, switch.seleccio)
-        llargada = obtenir_llargada(switch.playlist)
-        switch.fitxer, switch.in_rep, switch.seleccio = saltar(kwargs.get("list", None), switch.playlist, switch.in_rep, switch.seleccio, switch.fitxer, llargada, kwargs)
+        switch.fitxer, switch.in_rep, switch.seleccio = saltar(kwargs.get("list", None), switch.playlist, switch.in_rep, switch.seleccio, switch.fitxer, switch.index - 1, kwargs)
         
 #Lambda que mostra el missatge amb la informació
 sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
@@ -131,9 +130,7 @@ def obtenir_canço(listbox, index_actual, seleccio):
 
     return index_actual, seleccio
 
-#lambda que obté la llargada de la playlist
-obtenir_llargada = lambda playlist: len(playlist) - 1
-
+#funció que salta a la cançó que toca (prèvia o següent) i la reprodueix
 def saltar(llista, playlist, index_actual, seleccio, canço, llargada, d_args):
     
     if d_args.get("previ", False):
