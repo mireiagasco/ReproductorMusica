@@ -32,9 +32,11 @@ def switch(**kwargs):
     elif opcio == 4:    #pause
         mixer.music.pause()
         switch.pausat = True
-    elif opcio == 5:    #següent
-        switch.fitxer, switch.in_rep, switch.seleccio = seguent(kwargs.get("d_llista", None), switch.playlist, switch.in_rep, switch.seleccio, switch.fitxer, kwargs)
-
+    elif opcio == 5:    #següent o previ
+        switch.in_rep, switch.seleccio = obtenir_canço(kwargs.get("list", None), switch.in_rep, switch.seleccio)
+        llargada = obtenir_llargada(switch.playlist)
+        switch.fitxer, switch.in_rep, switch.seleccio = saltar(kwargs.get("list", None), switch.playlist, switch.in_rep, switch.seleccio, switch.fitxer, llargada, kwargs)
+        
 #Lambda que mostra el missatge amb la informació
 sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
 
@@ -85,7 +87,13 @@ def eliminar_detalls(d_etiq):
     etiqueta_durada['text'] = " "
     etiqueta_durada_actual['text'] = " "
 
-#funció que reprodueix una cançó prèviament seleccionada i dona error si no s'ha escollit la cançó
+#funció que reprodueix la cançó passada i en mostra els detalls
+def reproduir(song, d_args):
+    mixer.music.load(song) #carreguem el fitxer que volem reproduir
+    mixer.music.play() #reproduim la música
+    mostrar_detalls(song, d_args)
+
+#funció que envia a reproduir la cançó seleccionada a la llista
 def play(canço, pausat, playlist, seleccio, dic_args):
     #si la música estava pausada la tornem a engegar
     if pausat:
@@ -99,9 +107,7 @@ def play(canço, pausat, playlist, seleccio, dic_args):
             pos_sel = llista.curselection()
             seleccio = playlist[pos_sel[0]]
             canço = seleccio
-            mixer.music.load(canço) #carreguem el fitxer que volem reproduir
-            mixer.music.play() #reproduim la música
-            mostrar_detalls(canço, dic_args)
+            reproduir(canço, dic_args)
         else:
             tkinter.messagebox.showerror("Error", "No s'ha seleccionat cap cançó")
     return canço, pausat, playlist, seleccio
@@ -111,38 +117,62 @@ def stop(d_args):
     mixer.music.stop()
     eliminar_detalls(d_args)
 
-#funció que fa que es reprodueixi la següent cançó
-def seguent(llista, playlist, index_actual, seleccio, canço, d_args):
-
+#funció que obté la posició i la cançó que toca reproduir
+def obtenir_canço(listbox, index_actual, seleccio):
+    
     #obtenim l'índex de la cançó seleccionada
-    posicio_actual = llista.curselection()
+    posicio_actual = listbox.curselection()
 
     #si l'índex és nul o s'ha canviat la cançó seleccionada
     if index_actual == None or posicio_actual[0] != seleccio:
         index_actual = posicio_actual[0]
         seleccio = index_actual
 
-    #obtenim l'índex màxim de la playlist
-    llargada = len(playlist) - 1
+    return index_actual, seleccio
 
+#lambda que obté la llargada de la playlist
+obtenir_llargada = lambda playlist: len(playlist) - 1
+
+def saltar(llista, playlist, index_actual, seleccio, canço, llargada, d_args):
+    
+    if d_args.get("previ", False):
+        canço, index_actual = previ(playlist, index_actual, canço, llargada)
+    if d_args.get("seguent", False):
+        canço, index_actual = seguent(playlist, index_actual, canço, llargada)
+
+    reproduir(canço, d_args)
+    return canço, index_actual, seleccio
+
+#funció que fa que es reprodueixi la cançó prèvia
+def previ(playlist, index_actual, canço, llargada,):
+
+    #si l'índex és zero, la cançó prèvia serà la última
+    if index_actual == 0:
+        canço = playlist[llargada]
+        index_actual = llargada
+
+    #si l'índex següent és vàlid, carreguem la cançó prèvia
+    else:
+        index_actual -= 1
+        canço = playlist[index_actual]
+      
+    return canço, index_actual
+
+#funció que fa que es reprodueixi la següent cançó
+def seguent(playlist, index_actual, canço, llargada):
+         
     #si l'índex següent surt de la llista, carreguem la primera cançó
     if index_actual >= llargada:
         canço = playlist[0]
-        mixer.music.load(canço)
         index_actual = 0
 
     #si l'índex següent és vàlid, carreguem la següent cançó
     else:
         index_actual += 1
         canço = playlist[index_actual]
-        mixer.music.load(canço)
-
-    mixer.music.play()
+      
+    return canço, index_actual
     
-    #mostrem els detalls de la nova cançó i retornem l'índex
-    mostrar_detalls(canço, d_args)
-    return canço, index_actual, seleccio
-
 #funció que obté la durada de la cançó que sona
 def format_durada(temps):
     min, sec = divmod(temps, 60)
