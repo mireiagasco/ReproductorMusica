@@ -21,9 +21,9 @@ def switch(**kwargs):
     opcio = kwargs.get("accio", "Error")
 
     #cridem la funció que toqui segons el botó pitjat
-    if opcio == 0:
+    if opcio == 0:      #importar cançó
         switch.fitxer, switch.index, switch.playlist = importar_musica(kwargs.get("listbox", None), switch.fitxer, switch.index, switch.playlist)
-    elif opcio == 1:
+    elif opcio == 1:    #acabar el programa
         aturar_programa(kwargs)
     elif opcio == 2:    #play
         switch.fitxer, switch.pausat, switch.playlist, switch.seleccio = play(switch.fitxer, switch.pausat, switch.playlist,switch.seleccio, kwargs)
@@ -38,11 +38,14 @@ def switch(**kwargs):
             tkinter.messagebox.showerror("Error", "Selecciona una cançó per poder passar a la següent o a la prèvia")
         else:
             switch.fitxer, switch.in_rep, switch.seleccio = saltar(kwargs.get("list", None), switch.playlist, switch.in_rep, switch.seleccio, switch.fitxer, switch.index - 1, kwargs)
-    elif opcio == 6:
+    elif opcio == 6:    #eliminar cançó
         switch.playlist, switch.index = eliminar_canço(switch.playlist, kwargs.get("listbox", None), switch.index)
 
-#Lambda que mostra el missatge amb la informació
-sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
+#Lambda que mostra el missatge amb la info de about us
+informacio = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
+
+#Lambda que mostra la info sobre el reproductor
+sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Sobre Nosaltres", "Programadora: Mireia Gasco\nAny: 2020\nAll rights reserved\n(com si algú volgués utilitzar aquesta merda, però em feia ilu :)")
 
 #funció que carrega una cançó a la llista de reproducció
 def importar_musica(llista, canço, index, playlist):
