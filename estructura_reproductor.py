@@ -98,7 +98,7 @@ def crear_reproductor():
     boto_afegir = Button(marc_esquerre, text = " Afegir ", command = lambda: switch(accio = 0, listbox = llista))
     boto_afegir.grid(row = 1, column = 0, pady = 10, padx = 10)
 
-    boto_eliminar = Button(marc_esquerre, text = "Eliminar")
+    boto_eliminar = Button(marc_esquerre, text = "Eliminar", command = lambda: switch(accio = 6, listbox = llista))
     boto_eliminar.grid(row = 1, column = 1, pady = 10, padx = 10)
 
     #creem el slider del volum
