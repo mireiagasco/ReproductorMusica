@@ -10,12 +10,13 @@ import time
 def switch(**kwargs):
 
     #simulem les variables estàtiques que necessitarem en les diferents funcions
-    switch.pausat = getattr(switch, "pausat", False)
-    switch.fitxer = getattr(switch, "fitxer", None)
-    switch.fil = getattr(switch, "fil", None)
-    switch.playlist = getattr(switch, "playlist", [])
-    switch.index = getattr(switch, "index", 0)
-    switch.temps = getattr(switch, "temps", 0)
+    switch.pausat = getattr(switch, "pausat", False)    #indica si la música està pausada
+    switch.fitxer = getattr(switch, "fitxer", None)     #conté la cançó que s'ha de reproduir
+    switch.fil = getattr(switch, "fil", None)           #conté el fil que fa el countdown del temps de la cançó
+    switch.playlist = getattr(switch, "playlist", [])   #llista de cançons (amb el path) per reproduir
+    switch.index = getattr(switch, "index", 0)          #índex que marca quantes cançons hi ha a la llista
+    switch.in_rep = getattr(switch, "in_rep", None)     #índex que marca quina cançó s'està reproduint
+    switch.temps = getattr(switch, "temps", 0)          #temps que porta reproduint-se la cançó
 
     #obtenim el valor de l'opció del diccionari d'arguments
     opcio = kwargs.get("accio", "Error")
@@ -25,14 +26,16 @@ def switch(**kwargs):
         importar_musica(kwargs.get("listbox", None))
     elif opcio == 1:
         aturar_programa(kwargs)
-    elif opcio == 2:
+    elif opcio == 2:    #play
         play(kwargs)
-    elif opcio == 3:
-        stop(kwargs)
-    elif opcio == 4:
-        pause()
-    elif opcio == 5:
-        pass
+    elif opcio == 3:    #stop
+        mixer.music.stop()
+        eliminar_detalls(kwargs)
+    elif opcio == 4:    #pause
+        mixer.music.pause()
+        switch.pausat = True
+    elif opcio == 5:    #següent
+        switch.temps, switch.in_rep = seguent(switch.temps, kwargs.get("d_llista", None), switch.playlist, switch.in_rep, kwargs)  
 
 #Lambda que mostra el missatge amb la informació
 sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
@@ -105,16 +108,25 @@ def play(dic_args):
         else:
             tkinter.messagebox.showerror("Error", "No s'ha seleccionat cap cançó")
 
-#funció que para la música
-def stop(etiquetes):
-   mixer.music.stop()
-   eliminar_detalls(etiquetes)
+#funció que fa que es reprodueixi la següent cançó
+def seguent(t, llista, playlist, index_actual, d_args):
+    #si encara no hem reproduit res, obtenim l'índex de la cançó seleccionada
+    if index_actual == None:
+        posicio_actual = llista.curselection()
+        index_actual = posicio_actual[0]
 
-#funció que para temporalment la reproducció de la cançó que sona
-def pause():
-   mixer.music.pause()
-   switch.pausat = True
-
+    llargada = len(playlist) - 1
+    if index_actual >= llargada:
+        mixer.music.load(playlist[0])
+        index_actual = 0
+    else:
+        index_actual += 1
+        mixer.music.load(playlist[index_actual])
+    mixer.music.play()
+    eliminar_detalls(d_args)
+    mostrar_detalls(d_args)
+    t = 0
+    return t, index_actual
 
 #funció que obté la durada de la cançó que sona
 def format_durada(temps):
