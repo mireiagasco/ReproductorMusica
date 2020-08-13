@@ -27,9 +27,10 @@ def crear_reproductor():
     submenu_reproductor.add_command(label = "Sortir", command = lambda: switch(accio = 1, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual, finestra = finestra_general))
 
     #creem el submenú "ajuda"
-    submenu_ajuda = Menu(barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
-    barra_menu.add_cascade(label = "Informació", menu = submenu_ajuda)
-    submenu_ajuda.add_command(label = "Veure info", command = sobre_nosaltres)
+    submenu_info = Menu(barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
+    barra_menu.add_cascade(label = "Informació", menu = submenu_info)
+    submenu_info.add_command(label = "Veure info", command = informacio)
+    submenu_info.add_command(label = "Sobre Nosaltres", command = sobre_nosaltres)
 
     #creem marcs per organitzar els botons
     marc_dret = Frame(finestra_general)
