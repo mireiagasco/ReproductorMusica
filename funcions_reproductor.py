@@ -12,38 +12,37 @@ def switch(**kwargs):
     #simulem les variables estàtiques que necessitarem en les diferents funcions
     switch.pausat = getattr(switch, "pausat", False)    #indica si la música està pausada
     switch.fitxer = getattr(switch, "fitxer", None)     #conté la cançó que s'ha de reproduir
-    switch.fil = getattr(switch, "fil", None)           #conté el fil que fa el countdown del temps de la cançó
     switch.playlist = getattr(switch, "playlist", [])   #llista de cançons (amb el path) per reproduir
     switch.index = getattr(switch, "index", 0)          #índex que marca quantes cançons hi ha a la llista
     switch.in_rep = getattr(switch, "in_rep", None)     #índex que marca quina cançó s'està reproduint
-    switch.temps = getattr(switch, "temps", 0)          #temps que porta reproduint-se la cançó
+    switch.seleccio = getattr(switch, "seleccio", None) #indica la posició de la cançó seleccionada
 
     #obtenim el valor de l'opció del diccionari d'arguments
     opcio = kwargs.get("accio", "Error")
 
     #cridem la funció que toqui segons el botó pitjat
     if opcio == 0:
-        importar_musica(kwargs.get("listbox", None))
+        switch.fitxer = importar_musica(kwargs.get("listbox", None), switch.fitxer)
     elif opcio == 1:
         aturar_programa(kwargs)
     elif opcio == 2:    #play
-        play(kwargs)
+        switch.pausat, switch.playlist = play(switch.pausat, switch.playlist, kwargs)
     elif opcio == 3:    #stop
-        mixer.music.stop()
-        eliminar_detalls(kwargs)
+        stop(kwargs)
     elif opcio == 4:    #pause
         mixer.music.pause()
         switch.pausat = True
     elif opcio == 5:    #següent
-        switch.temps, switch.in_rep = seguent(switch.temps, kwargs.get("d_llista", None), switch.playlist, switch.in_rep, kwargs)  
+        switch.in_rep, switch.seleccio = seguent(kwargs.get("d_llista", None), switch.playlist, switch.in_rep, switch.seleccio ,kwargs)
 
 #Lambda que mostra el missatge amb la informació
 sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
 
 #funció que carrega una cançó a la llista de reproducció
-def importar_musica(llista):
-    switch.fitxer = tkinter.filedialog.askopenfilename()
-    afegir_a_llista(switch.fitxer, llista)
+def importar_musica(llista, canço):
+    canço = tkinter.filedialog.askopenfilename()
+    afegir_a_llista(canço, llista)
+    return canço
 
 #funció que afegeix una cançó a una llista
 def afegir_a_llista(canço, llista):
@@ -76,10 +75,6 @@ def mostrar_detalls(dic_args):
     min, sec = format_durada(durada_total)
     etiqueta_durada['text'] = "Total: {:00d}:{:00d}".format(min, sec)
 
-    #creem el thread per mostrar el temps actual
-    fil = threading.Thread(target = temps_rep, args = (durada_total, dic_args,))
-    fil.start()
-
 def eliminar_detalls(d_etiq):
     #obtenim les etiquetes
     etiqueta_nom = d_etiq.get("nom", "Error")
@@ -91,58 +86,63 @@ def eliminar_detalls(d_etiq):
     etiqueta_durada_actual['text'] = " "
 
 #funció que reprodueix una cançó prèviament seleccionada i dona error si no s'ha escollit la cançó
-def play(dic_args):
+def play(pausat, playlist, dic_args):
     #si la música estava pausada la tornem a engegar
-    if switch.pausat:
+    if pausat:
         mixer.music.unpause()
-        switch.pausat = False
+        pausat = False
     else:
         #obtenim la llista de cançons
         llista = dic_args.get("list", None)
         #si hi ha alguna cançó seleccionada
         if llista.curselection():
             canço_seleccionada = llista.curselection()
-            mixer.music.load(switch.playlist[canço_seleccionada[0]]) #carreguem el fitxer que volem reproduir
+            mixer.music.load(playlist[canço_seleccionada[0]]) #carreguem el fitxer que volem reproduir
             mixer.music.play() #reproduim la música
             mostrar_detalls(dic_args)
         else:
             tkinter.messagebox.showerror("Error", "No s'ha seleccionat cap cançó")
+    return pausat, playlist
+
+#funció que atura la música
+def stop(d_args):
+    mixer.music.stop()
+    eliminar_detalls(d_args)
 
 #funció que fa que es reprodueixi la següent cançó
-def seguent(t, llista, playlist, index_actual, d_args):
-    #si encara no hem reproduit res, obtenim l'índex de la cançó seleccionada
-    if index_actual == None:
-        posicio_actual = llista.curselection()
-        index_actual = posicio_actual[0]
+def seguent(llista, playlist, index_actual, seleccio, d_args):
 
+    #obtenim l'índex de la cançó seleccionada
+    posicio_actual = llista.curselection()
+
+    #si l'índex és nul o s'ha canviat la cançó seleccionada
+    if index_actual == None or posicio_actual[0] != seleccio:
+        index_actual = posicio_actual[0]
+        seleccio = index_actual
+
+    #obtenim l'índex màxim de la playlist
     llargada = len(playlist) - 1
+
+    #si l'índex següent surt de la llista, carreguem la primera cançó
     if index_actual >= llargada:
         mixer.music.load(playlist[0])
         index_actual = 0
+
+    #si l'índex següent és vàlid, carreguem la següent cançó
     else:
         index_actual += 1
         mixer.music.load(playlist[index_actual])
+
     mixer.music.play()
-    eliminar_detalls(d_args)
+    
+    #mostrem els detalls de la nova cançó i retornem l'índex
     mostrar_detalls(d_args)
-    t = 0
-    return t, index_actual
+    return index_actual, seleccio
 
 #funció que obté la durada de la cançó que sona
 def format_durada(temps):
     min, sec = divmod(temps, 60)
     return int(min), int(sec)
-
-#funció que obté la durada actual de la cançó
-def temps_rep(durada, d_etiq):
-    #obtenim l'etiqueta
-    etiqueta_durada_actual = d_etiq.get("durada_actual", None)
-    while switch.temps <= durada and mixer.music.get_busy():
-        if switch.pausat == False:
-            min, sec = divmod(switch.temps, 60)
-            etiqueta_durada_actual["text"] = "Temps: {:02d}:{:02d}".format(int(min), int(sec))
-            time.sleep(1)
-            switch.temps += 1
 
 #funció que tanca el programa
 def aturar_programa(dic_etiq):
