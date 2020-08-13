@@ -30,9 +30,9 @@ def switch(**kwargs):
     elif opcio == 1:
         aturar_programa(kwargs)
     elif opcio == 2:
-        pass
+        play(kwargs)
     elif opcio == 3:
-        pass
+        stop(kwargs)
 
 #Lambda que mostra el missatge amb la informació
 sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
@@ -49,6 +49,34 @@ def afegir_a_llista(canço, llista):
     switch.playlist.append(canço)
     switch.index += 1
 
+#funció que mostra els detalls de la cançó que es reprodueix
+def mostrar_detalls(dic_args):
+
+    #obtenim les etiquetes
+    etiqueta_nom = dic_args.get("nom", None)
+    etiqueta_durada = dic_args.get("durada", None)
+
+    #mostrem el nom
+    etiqueta_nom['text'] = "Nom: {}".format(path.basename(switch.fitxer))
+    info = path.splitext(switch.fitxer)
+    #segons l'extensió obtenim la durada de diferents formes
+    if info[1] == '.wav':
+        canço_actual = mixer.Sound(switch.fitxer)
+        durada_total = canço_actual.get_length()
+    elif info[1] == '.mp3':
+        audio = MP3(switch.fitxer)
+        durada_total = audio.info.length
+    else:
+        durada_total = 0
+
+    #formategem la durada i la mostrem
+    min, sec = format_durada(durada_total)
+    etiqueta_durada['text'] = "Total: {:00d}:{:00d}".format(min, sec)
+
+    #creem el thread per mostrar el temps actual
+    fil = threading.Thread(target = temps_rep, args = (durada_total, dic_args,))
+    fil.start()
+
 def eliminar_detalls(d_etiq):
     #obtenim les etiquetes
     etiqueta_nom = d_etiq.get("nom", "Error")
@@ -59,10 +87,44 @@ def eliminar_detalls(d_etiq):
     etiqueta_durada['text'] = " "
     etiqueta_durada_actual['text'] = " "
 
+#funció que reprodueix una cançó prèviament seleccionada i dona error si no s'ha escollit la cançó
+def play(dic_args):
+    #si la música estava pausada la tornem a engegar
+    if switch.pausat:
+        mixer.music.unpause()
+        switch.pausat = False
+    else:
+        #obtenim la llista de cançons
+        llista = dic_args.get("list", None)
+        #si hi ha alguna cançó seleccionada
+        if llista.curselection():
+            canço_seleccionada = llista.curselection()
+            mixer.music.load(switch.playlist[canço_seleccionada[0]]) #carreguem el fitxer que volem reproduir
+            mixer.music.play() #reproduim la música
+            mostrar_detalls(dic_args)
+        else:
+            tkinter.messagebox.showerror("Error", "No s'ha seleccionat cap cançó")
+
 #funció que para la música
 def stop(etiquetes):
    mixer.music.stop()
    eliminar_detalls(etiquetes)
+
+#funció que obté la durada de la cançó que sona
+def format_durada(temps):
+    min, sec = divmod(temps, 60)
+    return int(min), int(sec)
+
+#funció que obté la durada actual de la cançó
+def temps_rep(durada, d_etiq):
+    #obtenim l'etiqueta
+    etiqueta_durada_actual = d_etiq.get("durada_actual", None)
+    while switch.temps <= durada and mixer.music.get_busy():
+        if switch.pausat == False:
+            min, sec = divmod(switch.temps, 60)
+            etiqueta_durada_actual["text"] = "Temps: {:02d}:{:02d}".format(int(min), int(sec))
+            time.sleep(1)
+            switch.temps += 1
 
 #funció que tanca el programa
 def aturar_programa(dic_etiq):
