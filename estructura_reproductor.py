@@ -77,7 +77,7 @@ def crear_reproductor():
     foto_mute = PhotoImage(file = r"icones\mute.png")
 
     #creem els botons
-    boto_previ = Button(marc_central, image = foto_previ, borderwidth = 0)
+    boto_previ = Button(marc_central, image = foto_previ, borderwidth = 0, command = lambda: switch(accio = 5, list = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual, previ = True))
     boto_previ.grid(row = 0, column = 1, padx = 10, pady = 20)
 
     boto_pause = Button(marc_central, image = foto_pause, borderwidth = 0, command = lambda: switch(accio = 4))
@@ -89,7 +89,7 @@ def crear_reproductor():
     boto_play = Button(marc_central, image = foto_play, borderwidth = 0, command = lambda: switch(accio = 2, list = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual))
     boto_play.grid(row = 0, column = 4, padx = 10, pady = 20)
 
-    boto_seguent = Button(marc_central, image = foto_seguent, borderwidth = 0, command = lambda: switch(accio = 5, d_llista = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual))
+    boto_seguent = Button(marc_central, image = foto_seguent, borderwidth = 0, command = lambda: switch(accio = 5, list = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual, seguent = True))
     boto_seguent.grid(row = 0, column = 5, padx = 10, pady = 20)
 
     boto_mute = Button(marc_inferior, image = foto_volum, borderwidth = 0, command = lambda: mute(boto_mute, foto_mute, foto_volum, slider_volum))
