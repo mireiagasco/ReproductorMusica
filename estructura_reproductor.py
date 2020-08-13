@@ -21,7 +21,7 @@ def crear_reproductor():
     submenu_reproductor = Menu(barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
     barra_menu.add_cascade(label = "Reproductor", menu = submenu_reproductor)
     submenu_reproductor.add_command(label = "Importar música", command = lambda: switch(accio = 0, listbox = llista))
-    submenu_reproductor.add_command(label = "Sortir")
+    submenu_reproductor.add_command(label = "Sortir", command = lambda: switch(accio = 1, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual, finestra = finestra_general))
 
     #creem el submenú "ajuda"
     submenu_ajuda = Menu(barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
@@ -103,6 +103,7 @@ def crear_reproductor():
     slider_volum.set(50) #establim 50 com el valor per defecte
     slider_volum.grid(pady = 10, column = 0, row = 0)
 
-    #finestra_general.protocol("WM_DELETE_WINDOW", aturar_programa)
+    finestra_general.protocol("WM_DELETE_WINDOW", aturar_programa)
     finestra_general.mainloop()
+
 
