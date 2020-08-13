@@ -4,6 +4,8 @@ from funcions_reproductor import *
 from tkinter import *
 import tkinter.messagebox
 import tkinter.filedialog
+from tkinter import ttk
+from ttkthemes import themed_tk as tk
 
 #Funció que genera el reproductor
 def crear_reproductor():
@@ -12,7 +14,10 @@ def crear_reproductor():
     mixer.init()
 
     #generem la finestra principal
-    finestra_general = Tk()
+    finestra_general = tk.ThemedTk()
+    finestra_general.get_themes()
+    finestra_general.set_theme("breeze")
+
     finestra_general.title("Reproductor de Música")
     finestra_general.iconbitmap(r"icones\icona_reproductor.ico")
 
@@ -33,40 +38,42 @@ def crear_reproductor():
     submenu_info.add_command(label = "Sobre Nosaltres", command = sobre_nosaltres)
 
     #creem marcs per organitzar els botons
-    marc_dret = Frame(finestra_general)
+    marc_dret = ttk.Frame(finestra_general)
     marc_dret.pack(side = RIGHT)
 
-    marc_superior = Frame(marc_dret)
-    marc_superior.pack()
-
-    marc_central = Frame(marc_dret)
-    marc_central.pack()
-
-    marc_inferior = Frame(marc_dret)
-    marc_inferior.pack()
-
-    marc_esquerre = Frame(finestra_general)
+    marc_esquerre = ttk.Frame(finestra_general)
     marc_esquerre.pack(side = LEFT)
 
+    marc_superior = ttk.Frame(marc_dret)
+    marc_superior.pack()
+
+    marc_central = ttk.Frame(marc_dret)
+    marc_central.pack()
+
+    marc_inferior = ttk.Frame(marc_dret)
+    marc_inferior.pack()
+
+   
+
     #creem la l'etiqueta on mostrem la benvinguda
-    etiqueta_benvinguda = Label(marc_superior, text = "Benvingut/da!", pady = 10)
-    etiqueta_benvinguda.pack()
+    etiqueta_benvinguda = Label(marc_superior, text = "Benvingut/da!", font = "Gabriola 20 bold")
+    etiqueta_benvinguda.pack(pady = 10)
 
     #creem la listbox on mostrarem les cançons en cua
     llista = Listbox(marc_esquerre, height = 10, width = 25)
-    llista.grid(row = 0, column = 0, columnspan = 2, pady = 10)
+    llista.pack()
 
     #creem l'etiqueta on mostrarem el nom de la cançó
-    etiqueta_nom = Label(marc_superior, pady = 10)
-    etiqueta_nom.pack()
+    etiqueta_nom = Label(marc_superior)
+    etiqueta_nom.pack(pady = 10)
 
     #creem l'etiqueta amb la durada actual
     etiqueta_durada_actual = Label(marc_superior)
     etiqueta_durada_actual.pack(side = LEFT)
 
     #creem l'etiqueta on mostrarem la durada de la cançó
-    etiqueta_durada = Label(marc_superior, pady = 10)
-    etiqueta_durada.pack(side = RIGHT)
+    etiqueta_durada = Label(marc_superior)
+    etiqueta_durada.pack(side = RIGHT, pady = 10)
 
     #carreguem les fotos que utilitzarem pels botons
     foto_play = PhotoImage(file = r"icones\001-play.png")
@@ -78,32 +85,32 @@ def crear_reproductor():
     foto_mute = PhotoImage(file = r"icones\mute.png")
 
     #creem els botons
-    boto_previ = Button(marc_central, image = foto_previ, borderwidth = 0, command = lambda: switch(accio = 5, list = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual, previ = True))
+    boto_previ = ttk.Button(marc_central, image = foto_previ, command = lambda: switch(accio = 5, list = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual, previ = True))
     boto_previ.grid(row = 0, column = 1, padx = 10, pady = 20)
 
-    boto_pause = Button(marc_central, image = foto_pause, borderwidth = 0, command = lambda: switch(accio = 4))
+    boto_pause = ttk.Button(marc_central, image = foto_pause, command = lambda: switch(accio = 4))
     boto_pause.grid(row = 0, column = 2, padx = 10, pady = 20)
 
-    boto_stop = Button(marc_central, image = foto_stop, borderwidth = 0, command = lambda: switch(accio = 3, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual))
+    boto_stop = ttk.Button(marc_central, image = foto_stop, command = lambda: switch(accio = 3, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual))
     boto_stop.grid(row = 0, column = 3, padx = 10, pady = 20)
 
-    boto_play = Button(marc_central, image = foto_play, borderwidth = 0, command = lambda: switch(accio = 2, list = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual))
+    boto_play = ttk.Button(marc_central, image = foto_play, command = lambda: switch(accio = 2, list = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual))
     boto_play.grid(row = 0, column = 4, padx = 10, pady = 20)
 
-    boto_seguent = Button(marc_central, image = foto_seguent, borderwidth = 0, command = lambda: switch(accio = 5, list = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual, seguent = True))
+    boto_seguent = ttk.Button(marc_central, image = foto_seguent, command = lambda: switch(accio = 5, list = llista, nom = etiqueta_nom, durada = etiqueta_durada, durada_actual = etiqueta_durada_actual, seguent = True))
     boto_seguent.grid(row = 0, column = 5, padx = 10, pady = 20)
 
-    boto_mute = Button(marc_inferior, image = foto_volum, borderwidth = 0, command = lambda: mute(boto_mute, foto_mute, foto_volum, slider_volum))
+    boto_mute = ttk.Button(marc_inferior, image = foto_volum, command = lambda: mute(boto_mute, foto_mute, foto_volum, slider_volum))
     boto_mute.grid(row = 1, column = 0, padx = 20, pady = 10)
 
-    boto_afegir = Button(marc_esquerre, text = " Afegir ", command = lambda: switch(accio = 0, listbox = llista))
-    boto_afegir.grid(row = 1, column = 0, pady = 10, padx = 10)
+    boto_afegir = ttk.Button(marc_esquerre, text = " Afegir ", command = lambda: switch(accio = 0, listbox = llista))
+    boto_afegir.pack(side = LEFT)
 
-    boto_eliminar = Button(marc_esquerre, text = "Eliminar", command = lambda: switch(accio = 6, listbox = llista))
-    boto_eliminar.grid(row = 1, column = 1, pady = 10, padx = 10)
+    boto_eliminar = ttk.Button(marc_esquerre, text = "Eliminar", command = lambda: switch(accio = 6, listbox = llista))
+    boto_eliminar.pack(side = RIGHT)
 
     #creem el slider del volum
-    slider_volum = Scale(marc_inferior, from_ = 0, to = 100, orient = "horizontal", label = "         Volum", command = modif_volum)
+    slider_volum = ttk.Scale(marc_inferior, from_ = 0, to = 100, orient = "horizontal", command = modif_volum)
     slider_volum.set(50) #establim 50 com el valor per defecte
     slider_volum.grid(pady = 10, column = 0, row = 0)
 
@@ -114,7 +121,7 @@ def crear_reproductor():
 
 #funció que modifica el volum obtingut del slider per obtenir un valor entre 0 i 1 i el passa a la funció que modifica el volum
 def modif_volum(val):
-    volum = int(val) / 100
+    volum = float(val) / 100
     mixer.music.set_volume(volum)
 
 #funció que canvia l'estat de la música entre muted i amb so
