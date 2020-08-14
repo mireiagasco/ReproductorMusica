@@ -110,11 +110,15 @@ def eliminar_detalls(d_etiq):
     etiqueta_durada['text'] = " "
     etiqueta_durada_actual['text'] = " "
 
-#funció que reprodueix la cançó passada i en mostra els detalls
+#funció que reprodueix la cançó passada i en mostra els detalls sempre que sigui .wav o .mp3
 def reproduir(song, d_args):
-    mixer.music.load(song) #carreguem el fitxer que volem reproduir
-    mixer.music.play() #reproduim la música
-    mostrar_detalls(song, d_args)
+    extensio = path.splitext(song)
+    if extensio[1] == ".wav" or extensio[1] == ".mp3":
+        mixer.music.load(song) #carreguem el fitxer que volem reproduir
+        mixer.music.play() #reproduim la música
+        mostrar_detalls(song, d_args)
+    else:
+        tkinter.messagebox.showerror("Error", "Espero que no estiguis intentant escoltar una imatge o algo així...")
 
 #funció que envia a reproduir la cançó seleccionada a la llista
 def play(canço, pausat, playlist, seleccio, dic_args):
