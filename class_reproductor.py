@@ -7,7 +7,10 @@ import tkinter.filedialog
 from tkinter import ttk
 from ttkthemes import themed_tk as tk
 
-class Reproductor():
+
+#   classe reproductor: inicialitza un reproductor de música (pot rebre el nom com a paràmetre) i conté la funció que 
+#   inicia el loop principal de la finestra de tkinter
+class Reproductor:
     def __init__(self, *args, **kwargs):
         #inicialitzem el reproductor
         mixer.init()
@@ -17,7 +20,7 @@ class Reproductor():
         self.finestra_general.get_themes()
         self.finestra_general.set_theme("breeze")
 
-        self.finestra_general.title("Reproductor de Música")
+        self.finestra_general.title(kwargs.get("nom", "Reproductor de Música"))
         self.finestra_general.iconbitmap(r"icones\icona_reproductor.ico")
 
          #creem el menú principal
