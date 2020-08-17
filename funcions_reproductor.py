@@ -87,6 +87,7 @@ def reproduir(song, d_args):
     etiqueta_durada = d_args.get("durada", None)
 
     #segons l'extensió obtenim la durada de diferents formes
+    info = path.splitext(song)
     if info[1] == '.wav':
         canço_actual = mixer.Sound(song)
         durada_total = canço_actual.get_length()
@@ -100,8 +101,7 @@ def reproduir(song, d_args):
     if durada_total != 0:
         #mostrem el nom
         etiqueta_nom['text'] = "Nom: {}".format(path.basename(song))
-        info = path.splitext(song)
-        
+                
         #formategem la durada i la mostrem
         min, sec = format_durada(durada_total)
         etiqueta_durada['text'] = "Total: {:02d}:{:02d}".format(min, sec)
@@ -229,3 +229,8 @@ def mute(bt_mute,ft_mute, ft_volum, sld_volum):
 
 #funció que tanca el programa
 def aturar_programa(dic_etiq):
+    #aturem la música
+    stop(dic_etiq)
+    #obtenim la finestra general i la tanquem
+    finestra_general = dic_etiq.get("finestra", "Error")
+    finestra_general.destroy()
