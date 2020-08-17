@@ -31,7 +31,7 @@ class Reproductor:
         self.submenu_reproductor = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
         self.barra_menu.add_cascade(label = "Reproductor", menu = self.submenu_reproductor)
         self.submenu_reproductor.add_command(label = "Importar música", command = lambda: switch(accio = 0, listbox = self.llista))
-        self.submenu_reproductor.add_command(label = "Sortir", command = lambda: switch(accio = 1, nom = self.etiqueta_nom, durada = self.etiqueta_durada, durada_actual = self.etiqueta_durada_actual, finestra = self.finestra_general))
+        self.submenu_reproductor.add_command(label = "Sortir", command = lambda: switch(accio = 1, nom = self.etiqueta_nom, durada = self.etiqueta_durada, finestra = self.finestra_general))
 
          #creem el submenú "ajuda"
         self.submenu_info = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
@@ -67,10 +67,6 @@ class Reproductor:
         self.etiqueta_nom = Label(self.marc_superior)
         self.etiqueta_nom.pack(pady = 10)
 
-        #creem l'etiqueta amb la durada actual
-        self.etiqueta_durada_actual = Label(self.marc_superior)
-        self.etiqueta_durada_actual.pack(side = LEFT)
-
         #creem l'etiqueta on mostrarem la durada de la cançó
         self.etiqueta_durada = Label(self.marc_superior)
         self.etiqueta_durada.pack(side = RIGHT, pady = 10)
@@ -85,19 +81,19 @@ class Reproductor:
         self.foto_mute = PhotoImage(file = r"icones\mute.png")
 
         #creem els botons
-        self.boto_previ = ttk.Button(self.marc_central, image = self.foto_previ, command = lambda: switch(accio = 5, list = self.llista, nom = self.etiqueta_nom, durada = self.etiqueta_durada, durada_actual = self.etiqueta_durada_actual, previ = True))
+        self.boto_previ = ttk.Button(self.marc_central, image = self.foto_previ, command = lambda: switch(accio = 5, list = self.llista, nom = self.etiqueta_nom, durada = self.etiqueta_durada, previ = True))
         self.boto_previ.grid(row = 0, column = 1, padx = 10, pady = 20)
 
         self.boto_pause = ttk.Button(self.marc_central, image = self.foto_pause, command = lambda: switch(accio = 4))
         self.boto_pause.grid(row = 0, column = 2, padx = 10, pady = 20)
 
-        self.boto_stop = ttk.Button(self.marc_central, image = self.foto_stop, command = lambda: switch(accio = 3, nom = self.etiqueta_nom, durada = self.etiqueta_durada, durada_actual = self.etiqueta_durada_actual))
+        self.boto_stop = ttk.Button(self.marc_central, image = self.foto_stop, command = lambda: switch(accio = 3, nom = self.etiqueta_nom, durada = self.etiqueta_durada))
         self.boto_stop.grid(row = 0, column = 3, padx = 10, pady = 20)
 
-        self.boto_play = ttk.Button(self.marc_central, image = self.foto_play, command = lambda: switch(accio = 2, list = self.llista, nom = self.etiqueta_nom, durada = self.etiqueta_durada, durada_actual = self.etiqueta_durada_actual))
+        self.boto_play = ttk.Button(self.marc_central, image = self.foto_play, command = lambda: switch(accio = 2, list = self.llista, nom = self.etiqueta_nom, durada = self.etiqueta_durada))
         self.boto_play.grid(row = 0, column = 4, padx = 10, pady = 20)
 
-        self.boto_seguent = ttk.Button(self.marc_central, image = self.foto_seguent, command = lambda: switch(accio = 5, list = self.llista, nom = self.etiqueta_nom, durada = self.etiqueta_durada, durada_actual = self.etiqueta_durada_actual, seguent = True))
+        self.boto_seguent = ttk.Button(self.marc_central, image = self.foto_seguent, command = lambda: switch(accio = 5, list = self.llista, nom = self.etiqueta_nom, durada = self.etiqueta_durada, seguent = True))
         self.boto_seguent.grid(row = 0, column = 5, padx = 10, pady = 20)
 
         self.boto_mute = ttk.Button(self.marc_inferior, image = self.foto_volum, command = lambda: mute(self.boto_mute, self.foto_mute, self.foto_volum, self.slider_volum))
@@ -114,7 +110,7 @@ class Reproductor:
         self.slider_volum.set(50) #establim 50 com el valor per defecte
         self.slider_volum.grid(pady = 10, column = 0, row = 0)
 
-        dic = {"nom": self.etiqueta_nom, "durada": self.etiqueta_durada, "durada_actual": self.etiqueta_durada_actual, "finestra": self.finestra_general}
+        dic = {"nom": self.etiqueta_nom, "durada": self.etiqueta_durada, "finestra": self.finestra_general}
         self.finestra_general.protocol("WM_DELETE_WINDOW", lambda: aturar_programa(dic))
         
     def iniciar_reproduccio(self):
