@@ -205,6 +205,25 @@ def format_durada(temps):
     min, sec = divmod(temps, 60)
     return int(min), int(sec)
 
+#funció que modifica el volum obtingut del slider per obtenir un valor entre 0 i 1 i el passa a la funció que modifica el volum
+def modif_volum(val):
+    volum = float(val) / 100
+    mixer.music.set_volume(volum)
+
+#funció que canvia l'estat de la música entre muted i amb so
+def mute(bt_mute,ft_mute, ft_volum, sld_volum):
+    mute.muted = getattr(mute, "muted", False)
+    if mute.muted: #tornem a activar el volum
+        bt_mute.configure(image = ft_volum)
+        mixer.music.set_volume(0.5)
+        sld_volum.set(50)
+        mute.muted = False
+    else: #mutejem la música
+        bt_mute.configure(image = ft_mute)
+        mixer.music.set_volume(0)
+        sld_volum.set(0)
+        mute.muted = True
+
 #funció que tanca el programa
 def aturar_programa(dic_etiq):
     #aturem la música
