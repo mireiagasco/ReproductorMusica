@@ -42,10 +42,10 @@ def switch(**kwargs):
         switch.playlist, switch.index = eliminar_canço(switch.playlist, kwargs.get("listbox", None), switch.index)
 
 #Lambda que mostra el missatge amb la info de about us
-informacio = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter")
+informacio = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter, Pygame Mixer i Mutagen.mp3")
 
 #Lambda que mostra la info sobre el reproductor
-sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Sobre Nosaltres", "Programadora: Mireia Gasco\nAny: 2020\nAll rights reserved\n(com si algú volgués utilitzar aquesta merda, però em feia ilu :)")
+sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Sobre Nosaltres", "Programadora: Mireia Gasco\nAny: 2020\nAll rights reserved\n\n(em feia ilu posar-ho no em jutgeu :)")
 
 #funció que carrega una cançó a la llista de reproducció
 def importar_musica(llista, canço, index, playlist):
@@ -79,47 +79,34 @@ def eliminar_canço(playlist, listbox, index):
 
     return playlist, index
 
-#funció que mostra els detalls de la cançó que es reprodueix
-def mostrar_detalls(canço, dic_args):
+#funció que reprodueix la cançó passada i en mostra els detalls sempre que sigui .wav o .mp3
+def reproduir(song, d_args):
 
     #obtenim les etiquetes
-    etiqueta_nom = dic_args.get("nom", None)
-    etiqueta_durada = dic_args.get("durada", None)
+    etiqueta_nom = d_args.get("nom", None)
+    etiqueta_durada = d_args.get("durada", None)
 
     #mostrem el nom
-    etiqueta_nom['text'] = "Nom: {}".format(path.basename(canço))
-    info = path.splitext(canço)
+    etiqueta_nom['text'] = "Nom: {}".format(path.basename(song))
+    info = path.splitext(song)
     #segons l'extensió obtenim la durada de diferents formes
     if info[1] == '.wav':
-        canço_actual = mixer.Sound(canço)
+        canço_actual = mixer.Sound(song)
         durada_total = canço_actual.get_length()
     elif info[1] == '.mp3':
-        audio = MP3(canço)
+        audio = MP3(song)
         durada_total = audio.info.length
     else:
         durada_total = 0
 
     #formategem la durada i la mostrem
     min, sec = format_durada(durada_total)
-    etiqueta_durada['text'] = "Total: {:00d}:{:00d}".format(min, sec)
+    etiqueta_durada['text'] = "Total: {:02d}:{:02d}".format(min, sec)
 
-def eliminar_detalls(d_etiq):
-    #obtenim les etiquetes
-    etiqueta_nom = d_etiq.get("nom", "Error")
-    etiqueta_durada = d_etiq.get("durada", "Error")
-    etiqueta_durada_actual = d_etiq.get("durada_actual", "Error")
-    #eliminem el seu contingut
-    etiqueta_nom['text'] = " "
-    etiqueta_durada['text'] = " "
-    etiqueta_durada_actual['text'] = " "
-
-#funció que reprodueix la cançó passada i en mostra els detalls sempre que sigui .wav o .mp3
-def reproduir(song, d_args):
-    extensio = path.splitext(song)
-    if extensio[1] == ".wav" or extensio[1] == ".mp3":
+    #si la cançó era vàlida la reproduïm
+    if durada_total != 0:
         mixer.music.load(song) #carreguem el fitxer que volem reproduir
         mixer.music.play() #reproduim la música
-        mostrar_detalls(song, d_args)
     else:
         tkinter.messagebox.showerror("Error", "Espero que no estiguis intentant escoltar una imatge o algo així...")
 
@@ -133,19 +120,31 @@ def play(canço, pausat, playlist, seleccio, dic_args):
         #obtenim la llista de cançons
         llista = dic_args.get("list", None)
         #si hi ha alguna cançó seleccionada
-        if llista.curselection():
+        try:
+            llista.curselection()
             pos_sel = llista.curselection()
             seleccio = playlist[pos_sel[0]]
             canço = seleccio
             reproduir(canço, dic_args)
-        else:
-            tkinter.messagebox.showerror("Error", "No s'ha seleccionat cap cançó")
+        except IndexError:
+            tkinter.messagebox.showerror("Error", "Selecciona la cançó que vols reproduir")
     return canço, pausat, playlist, seleccio
 
 #funció que atura la música
 def stop(d_args):
+       
+    #obtenim les etiquetes
+    etiqueta_nom = d_args.get("nom", "Error")
+    etiqueta_durada = d_args.get("durada", "Error")
+    etiqueta_durada_actual = d_args.get("durada_actual", "Error")
+
+    #eliminem el seu contingut
+    etiqueta_nom['text'] = " "
+    etiqueta_durada['text'] = " "
+    etiqueta_durada_actual['text'] = " "
+
+    #aturem la música
     mixer.music.stop()
-    eliminar_detalls(d_args)
 
 #funció que obté la posició i la cançó que toca reproduir
 def obtenir_canço(listbox, index_actual, seleccio):
@@ -165,9 +164,9 @@ def obtenir_canço(listbox, index_actual, seleccio):
 #funció que salta a la cançó que toca (prèvia o següent) i la reprodueix
 def saltar(llista, playlist, index_actual, seleccio, canço, llargada, d_args):
     
-    if d_args.get("previ", False):
+    if d_args.get("previ", False):  #si previ és cert (valor per defecte: fals)
         canço, index_actual = previ(playlist, index_actual, canço, llargada)
-    if d_args.get("seguent", False):
+    if d_args.get("seguent", False):    #si següent és cert (valor per defecte: fals)
         canço, index_actual = seguent(playlist, index_actual, canço, llargada)
 
     reproduir(canço, d_args)
