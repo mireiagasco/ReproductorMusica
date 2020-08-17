@@ -69,7 +69,7 @@ class Reproductor:
 
         #creem l'etiqueta on mostrarem la durada de la cançó
         self.etiqueta_durada = Label(self.marc_superior)
-        self.etiqueta_durada.pack(side = RIGHT, pady = 10)
+        self.etiqueta_durada.pack(pady = 10)
 
         #carreguem les fotos que utilitzarem pels botons
         self.foto_play = PhotoImage(file = r"icones\001-play.png")
