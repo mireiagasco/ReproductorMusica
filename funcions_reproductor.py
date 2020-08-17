@@ -137,12 +137,10 @@ def stop(d_args):
     #obtenim les etiquetes
     etiqueta_nom = d_args.get("nom", "Error")
     etiqueta_durada = d_args.get("durada", "Error")
-    etiqueta_durada_actual = d_args.get("durada_actual", "Error")
 
     #eliminem el seu contingut
     etiqueta_nom['text'] = " "
     etiqueta_durada['text'] = " "
-    etiqueta_durada_actual['text'] = " "
 
     #aturem la música
     mixer.music.stop()
