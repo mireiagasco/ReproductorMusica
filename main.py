@@ -1,3 +1,4 @@
-from estructura_reproductor import crear_reproductor
+from class_reproductor import Reproductor
 
-crear_reproductor()
+reproductor = Reproductor()
+reproductor.iniciar_reproduccio()
