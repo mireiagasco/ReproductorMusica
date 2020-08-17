@@ -65,14 +65,17 @@ def afegir_a_llista(canço, llista, i, playlist):
 def eliminar_canço(playlist, listbox, index):
     #obtenim l'índex de la cançó a eliminar
     t_index_canço = listbox.curselection()
-    index_canço = t_index_canço[0]
+    try:
+        index_canço = t_index_canço[0]
 
-    #eliminem la cançó de la llista y de la listbox
-    del playlist[index_canço]
-    listbox.delete(index_canço)
+        #eliminem la cançó de la llista y de la listbox
+        del playlist[index_canço]
+        listbox.delete(index_canço)
 
-    #actualitzem la llargada de la llista
-    index -= 1
+        #actualitzem la llargada de la llista
+        index -= 1
+    except IndexError:  #si no hi ha cap cançó seleccionada
+        tkinter.messagebox.showerror("Error", "Selecciona la cançó que vols eliminar")
 
     return playlist, index
 
@@ -199,7 +202,7 @@ def seguent(playlist, index_actual, canço, llargada):
         canço = playlist[index_actual]
       
     return canço, index_actual
-    
+
 #funció que obté la durada de la cançó que sona
 def format_durada(temps):
     min, sec = divmod(temps, 60)
