@@ -86,9 +86,6 @@ def reproduir(song, d_args):
     etiqueta_nom = d_args.get("nom", None)
     etiqueta_durada = d_args.get("durada", None)
 
-    #mostrem el nom
-    etiqueta_nom['text'] = "Nom: {}".format(path.basename(song))
-    info = path.splitext(song)
     #segons l'extensió obtenim la durada de diferents formes
     if info[1] == '.wav':
         canço_actual = mixer.Sound(song)
@@ -99,12 +96,16 @@ def reproduir(song, d_args):
     else:
         durada_total = 0
 
-    #formategem la durada i la mostrem
-    min, sec = format_durada(durada_total)
-    etiqueta_durada['text'] = "Total: {:02d}:{:02d}".format(min, sec)
-
-    #si la cançó era vàlida la reproduïm
+    #si la cançó era vàlida mosrem la info i la reproduïm
     if durada_total != 0:
+        #mostrem el nom
+        etiqueta_nom['text'] = "Nom: {}".format(path.basename(song))
+        info = path.splitext(song)
+        
+        #formategem la durada i la mostrem
+        min, sec = format_durada(durada_total)
+        etiqueta_durada['text'] = "Total: {:02d}:{:02d}".format(min, sec)
+
         mixer.music.load(song) #carreguem el fitxer que volem reproduir
         mixer.music.play() #reproduim la música
     else:
@@ -228,8 +229,3 @@ def mute(bt_mute,ft_mute, ft_volum, sld_volum):
 
 #funció que tanca el programa
 def aturar_programa(dic_etiq):
-    #aturem la música
-    stop(dic_etiq)
-    #obtenim la finestra general i la tanquem
-    finestra_general = dic_etiq.get("finestra", "Error")
-    finestra_general.destroy()
