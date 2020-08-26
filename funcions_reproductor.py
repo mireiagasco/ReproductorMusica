@@ -45,7 +45,7 @@ def switch(**kwargs):
 informacio = lambda: tkinter.messagebox.showinfo("Informació", "Aquest reproductor ha estat creat amb Python tkinter, Pygame Mixer i Mutagen.mp3")
 
 #Lambda que mostra la info sobre el reproductor
-sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Sobre Nosaltres", "Programadora: Mireia Gasco\nAny: 2020\nAll rights reserved\n\n(em feia ilu posar-ho no em jutgeu :)")
+sobre_nosaltres = lambda: tkinter.messagebox.showinfo("Sobre Nosaltres", "Programadora: Mireia Gasco\nAny: 2020")
 
 #funció que carrega una cançó a la llista de reproducció
 def importar_musica(llista, canço, index, playlist):
