@@ -314,10 +314,9 @@ class Reproductor:
         self.submenu_info = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
         self.barra_menu.add_cascade(label = self.txt_info[self.idioma], menu = self.submenu_info)
         self.submenu_info.add_command(label = self.txt_vinfo[self.idioma], command = self.informacio)
-        self.submenu_info.add_command(label = self.txt_sobre[self.idioma], command = self.sobre_nosaltres)
-        
+        self.submenu_info.add_command(label = self.txt_sobre[self.idioma], command = self.sobre_nosaltres)        
       
-     #funció que tanca el programa
+    #funció que tanca el programa
     def aturar_programa(self):
         #aturem la música
         self.stop()
