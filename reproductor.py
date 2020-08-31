@@ -1,3 +1,15 @@
+#Arxiu que conté la classe reproductor
+from pygame import mixer
+from tkinter import *
+import tkinter.messagebox
+import tkinter.filedialog
+from tkinter import ttk
+from ttkthemes import themed_tk as tk
+from mutagen.mp3 import MP3
+import os
+
+
+#classe reproductor
 class Reproductor:
     def __init__(self, *args, **kwargs):
         
