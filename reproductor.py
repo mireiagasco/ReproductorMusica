@@ -1,16 +1,3 @@
-#Arxiu que conté la classe reproductor
-from pygame import mixer
-from tkinter import *
-import tkinter.messagebox
-import tkinter.filedialog
-from tkinter import ttk
-from ttkthemes import themed_tk as tk
-from mutagen.mp3 import MP3
-import os
-
-
-#classe reproductor
-
 class Reproductor:
     def __init__(self, *args, **kwargs):
         
@@ -50,7 +37,18 @@ class Reproductor:
         self.txt_er_salt = (("Error", "Selecciona una cançó per poder passar a la següent o a la prèvia"),
                             ("Error", "Selecciona una canción para poder pasar a la siguiente o a la previa"),
                             ("Error", "Select a song in order to go to the next one or the previous one"))
-        
+
+        self.txt_titol = ("Reproductor de Música", "Reproductor de Música", "Music Player")
+        self.txt_afegir = ("Afegir", "Añadir", "Add")
+        self.txt_eliminar = ("Eliminar", "Eliminar", "Del")
+        self.text_benv = ("Benvingut/da!", "Bienvenido/a!", "Welcome!")
+        self.txt_rep = ("Reproductor", "Reproductor", "Player")
+        self.txt_idioma = ("Idioma", "Idioma", "Language")
+        self.txt_sortir = ("Sortir", "Salir", "Exit")
+        self.txt_info = ("Informació", "Información", "Information")
+        self.txt_vinfo = ("Veure Info", "Ver Info", "Show Info")
+        self.txt_sobre = ("Sobre Nosaltres", "Sobre Nosotros", "About Us")
+
         #inicialitzem el reproductor
         mixer.init()
 
@@ -60,7 +58,7 @@ class Reproductor:
         self.finestra_general.set_theme("breeze")
         self.style = ttk.Style()
 
-        self.finestra_general.title(self.text_nom[self.idioma])
+        self.finestra_general.title(self.txt_titol[self.idioma])
         self.finestra_general.iconbitmap(r"icones\icona_reproductor.ico")
                  
         #creem marcs per organitzar els botons
@@ -80,7 +78,7 @@ class Reproductor:
         self.marc_inferior.pack()
 
         #creem l'etiqueta on mostrem la benvinguda
-        self.et_benv = Label(self.marc_superior, text = "Benvingut/da!", font = "Gabriola 20 bold")
+        self.et_benv = Label(self.marc_superior, text = self.text_benv[self.idioma], font = "Gabriola 20 bold")
         self.et_benv.pack(pady = 10)
 
         #creem la listbox on mostrarem les cançons en cua
@@ -88,9 +86,9 @@ class Reproductor:
         self.llista.pack()
 
         #creem els botons d'afegir i eliminar cançons
-        self.bt_afegir = ttk.Button(self.marc_esquerre, text = " Afegir ", command = self.importar_musica)
+        self.bt_afegir = ttk.Button(self.marc_esquerre, text = self.txt_afegir[self.idioma], command = self.importar_musica)
         self.bt_afegir.pack(side = LEFT)
-        self.bt_eliminar = ttk.Button(self.marc_esquerre, text = "Eliminar", command = self.eliminar_canço)
+        self.bt_eliminar = ttk.Button(self.marc_esquerre, text = self.txt_eliminar[self.idioma], command = self.eliminar_canço)
         self.bt_eliminar.pack(side = RIGHT)
 
         #creem el menú principal
@@ -282,78 +280,31 @@ class Reproductor:
             self.slider_volum.set(0)
             self.muted = True
 
-    #funció que canvia el tema del reproductor entre fosc i clar
+    #funció que canvia l'idioma del reproductor
     def canviar_idioma(self, opcio):
+
+        self.idioma = opcio
+        self.finestra_general.title(self.txt_titol[self.idioma])
+        self.bt_afegir["text"] = self.txt_afegir[self.idioma]
+        self.bt_eliminar["text"] = self.txt_eliminar[self.idioma]
+        self.et_benv["text"] = self.text_benv[self.idioma]
+
+        self.barra_menu.delete(0, END)
+        self.submenu_reproductor = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
+        self.barra_menu.add_cascade(label = self.txt_rep[self.idioma], menu = self.submenu_reproductor)
+        self.submenu_tema = Menu(self.submenu_reproductor, tearoff = False)
+        self.submenu_reproductor.add_cascade(label = self.txt_idioma[self.idioma], menu = self.submenu_tema)
+        self.submenu_tema.add_command(label = "Català", command = lambda: self.canviar_idioma(opcio = 0))
+        self.submenu_tema.add_command(label = "Castellano", command = lambda: self.canviar_idioma(opcio = 1))
+        self.submenu_tema.add_command(label = "English", command = lambda: self.canviar_idioma(opcio = 2))
+        self.submenu_reproductor.add_command(label = self.txt_sortir[self.idioma], command = self.aturar_programa)
+           
+        self.submenu_info = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
+        self.barra_menu.add_cascade(label = self.txt_info[self.idioma], menu = self.submenu_info)
+        self.submenu_info.add_command(label = self.txt_vinfo[self.idioma], command = self.informacio)
+        self.submenu_info.add_command(label = self.txt_sobre[self.idioma], command = self.sobre_nosaltres)
         
-        if opcio == 1:
-            #canviem a castellà
-            self.idioma = 1
-            self.finestra_general.title("Reproductor de Música")
-            self.bt_afegir["text"] = "Añadir"
-            self.bt_eliminar["text"] = "Eliminar"
-            self.et_benv["text"] = "Bienvenido/a!"
-
-            self.barra_menu.delete(0, END)
-            self.submenu_reproductor = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
-            self.barra_menu.add_cascade(label = "Reproductor", menu = self.submenu_reproductor)
-            self.submenu_tema = Menu(self.submenu_reproductor, tearoff = False)
-            self.submenu_reproductor.add_cascade(label = "Idioma", menu = self.submenu_tema)
-            self.submenu_tema.add_command(label = "Català", command = lambda: self.canviar_idioma(opcio = 0))
-            self.submenu_tema.add_command(label = "Castellano", command = lambda: self.canviar_idioma(opcio = 1))
-            self.submenu_tema.add_command(label = "English", command = lambda: self.canviar_idioma(opcio = 2))
-            self.submenu_reproductor.add_command(label = "Salir", command = self.aturar_programa)
-           
-            self.submenu_info = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
-            self.barra_menu.add_cascade(label = "Información", menu = self.submenu_info)
-            self.submenu_info.add_command(label = "Ver info", command = self.informacio)
-            self.submenu_info.add_command(label = "Sobre Nosotros", command = self.sobre_nosaltres)
-        
-        elif opcio == 2:
-            #canviem a anglès
-            self.idioma = 2
-            self.finestra_general.title("Music Player")
-            self.bt_afegir["text"] = "Add"
-            self.bt_eliminar["text"] = "Del"
-            self.et_benv["text"] = "Welcome!"
-
-            self.barra_menu.delete(0, END)
-            self.submenu_reproductor = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
-            self.barra_menu.add_cascade(label = "Player", menu = self.submenu_reproductor)
-            self.submenu_tema = Menu(self.submenu_reproductor, tearoff = False)
-            self.submenu_reproductor.add_cascade(label = "Language", menu = self.submenu_tema)
-            self.submenu_tema.add_command(label = "Català", command = lambda: self.canviar_idioma(opcio = 0))
-            self.submenu_tema.add_command(label = "Castellano", command = lambda: self.canviar_idioma(opcio = 1))
-            self.submenu_tema.add_command(label = "English", command = lambda: self.canviar_idioma(opcio = 2))
-            self.submenu_reproductor.add_command(label = "Exit", command = self.aturar_programa)
-           
-            self.submenu_info = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
-            self.barra_menu.add_cascade(label = "Information", menu = self.submenu_info)
-            self.submenu_info.add_command(label = "Show info", command = self.informacio)
-            self.submenu_info.add_command(label = "About Us", command = self.sobre_nosaltres)
-
-        else:
-            #canviem a català
-            self.idioma = 0
-            self.finestra_general.title("Reproductor de Música")
-            self.bt_afegir["text"] = "Afegir"
-            self.bt_eliminar["text"] = "Eliminar"
-            self.et_benv["text"] = "Benvingut/da!"
-
-            self.barra_menu.delete(0, END)
-            self.submenu_reproductor = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
-            self.barra_menu.add_cascade(label = "Reproductor", menu = self.submenu_reproductor)
-            self.submenu_tema = Menu(self.submenu_reproductor, tearoff = False)
-            self.submenu_reproductor.add_cascade(label = "Idioma", menu = self.submenu_tema)
-            self.submenu_tema.add_command(label = "Català", command = lambda: self.canviar_idioma(opcio = 0))
-            self.submenu_tema.add_command(label = "Castellano", command = lambda: self.canviar_idioma(opcio = 1))
-            self.submenu_tema.add_command(label = "English", command = lambda: self.canviar_idioma(opcio = 2))
-            self.submenu_reproductor.add_command(label = "Sortir", command = self.aturar_programa)
-           
-            self.submenu_info = Menu(self.barra_menu, tearoff = False)  #creem el submenú on aniran tots els botons
-            self.barra_menu.add_cascade(label = "Informació", menu = self.submenu_info)
-            self.submenu_info.add_command(label = "Veure info", command = self.informacio)
-            self.submenu_info.add_command(label = "Sobre Nosaltres", command = self.sobre_nosaltres)
-
+      
      #funció que tanca el programa
     def aturar_programa(self):
         #aturem la música
